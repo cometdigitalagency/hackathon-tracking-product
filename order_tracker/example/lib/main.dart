@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
             titleSpacing: 0,
             shadowColor: Colors.transparent,
             expandedHeight: 426,
-            backgroundColor: Colors.purple,
+            backgroundColor: Colors.purple.shade800,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
@@ -166,18 +167,99 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 174,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).shadowColor,
-                      spreadRadius: 0,
-                      blurRadius: 4,
-                      offset: const Offset(0, 0),
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor,
+                        spreadRadius: 0,
+                        blurRadius: 4,
+                        offset: const Offset(0, 0),
+                      )
+                    ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Example',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                        Container(
+                          height: 31,
+                          width: 78,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/Delivery.png"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'In Transit',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                        Text(
+                          'Last Update: 68 hours ago',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        // ignore: sized_box_for_whitespace
+                        Container(
+                          height: 5,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2.5),
+                            child: const LinearProgressIndicator(
+                              value: 0.8,
+                              color: Colors.purple,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 68,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'More Details',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.black,
+                                    ),
+                              ),
+                              SvgPicture.asset('assets/icons_arrow.svg')
+                            ],
+                          )
+                        ],
+                      ),
                     )
-                  ]
+                  ],
                 ),
-
               ),
             );
           }))
