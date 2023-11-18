@@ -19,7 +19,6 @@ class OrderTracker {
       print(response.statusCode);
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        print(data);
         return data;
       } else {
         throw Exception('Failed to fetch data: ${response.statusCode}');
