@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:order_tracker/order_tracker.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -10,21 +11,48 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+
       home: MyHomePage(),
     );
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
+class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // The order tracker
+  final OrderTracker orderTracker = OrderTracker();
+  late Future<Map<String, dynamic>> fetchData;
+  final TextEditingController productIdController = TextEditingController();
   @override
+  void initState() {
+    super.initState();
+  }
+
+  void _trackProduct() async {
+    final String enteredProductId = productIdController.text;
+
+    try {
+      final data = await orderTracker.fetchData(
+        express: Express.expressA,
+        productId: enteredProductId,
+      );
+      // Handle the fetched data as needed
+      print(data);
+    } catch (error) {
+      // Handle errors
+      print('Error: $error');
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
@@ -87,8 +115,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       borderRadius: BorderRadius.circular(4),
                                       color: Colors.white,
                                     ),
-                                    child: const TextField(
-                                      decoration: InputDecoration(
+                                    child: TextField(
+                                      controller: productIdController,
+                                      decoration: const InputDecoration(
                                         border: InputBorder.none,
                                       ),
                                     ),
@@ -114,17 +143,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: 48,
                             width: double.infinity,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _trackProduct();
+                              },
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.black,
                               ),
-                              child: Text('Track Product',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      )),
+                              child: Text(
+                                'Track Product',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                      color: Colors.white,
+                                    ),
+                              ),
                             ),
                           )
                         ],
@@ -177,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         offset: const Offset(0, 0),
                       )
                     ]),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
