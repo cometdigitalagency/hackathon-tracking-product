@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:order_tracker/order.dart';
-import 'package:order_tracker/order_tracker.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,63 +16,171 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Create a list of orders
-  List<Order> orders = [
-    Order(orderId: '1', productName: 'Product A', quantity: 3),
-    Order(orderId: '2', productName: 'Product B', quantity: 5),
-    Order(orderId: '3', productName: 'Product C', quantity: 2),
-  ];
-
-  // Use the Calculator to calculate the total quantity
-  Calculator calculator = Calculator();
-  late Future<int> totalQuantity;
-
-  @override
-  void initState() {
-    super.initState();
-    totalQuantity = calculator.calculateTotalQuantity(orders);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Order Tracker'),
-      ),
-      body: Column(
-        children: [
-          FutureBuilder<int>(
-            future: totalQuantity,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                int result = snapshot.data ?? 0;
-                return Text('Total Quantity: $result');
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('Product: ${orders[index].productName}'),
-                  subtitle: Text('Quantity: ${orders[index].quantity}'),
-                );
-              },
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            title: Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Text(
+                "Ha-Dee Delivery",
+                style: Theme.of(context).textTheme.headline6?.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+            ),
+            centerTitle: false,
+            floating: true,
+            titleSpacing: 0,
+            shadowColor: Colors.transparent,
+            expandedHeight: 426,
+            backgroundColor: Colors.purple,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 64,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Enter Product ID or scan Barcode',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 7,
+                              bottom: 40,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 49,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: Colors.white,
+                                    ),
+                                    child: const TextField(
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(14),
+                                  width: 50,
+                                  height: 49,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: Colors.white,
+                                  ),
+                                  child: Image.asset("assets/qr.png"),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 48,
+                            width: double.infinity,
+                            child: TextButton(
+                              onPressed: () {},
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.black,
+                              ),
+                              child: Text('Track Product',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                        color: Colors.white,
+                                      )),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
+          const SliverPadding(
+            padding: EdgeInsets.only(
+              top: 32,
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'My Products',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SliverList(delegate: SliverChildBuilderDelegate((_, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Container(
+                height: 174,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor,
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                      offset: const Offset(0, 0),
+                    )
+                  ]
+                ),
+
+              ),
+            );
+          }))
         ],
       ),
     );
