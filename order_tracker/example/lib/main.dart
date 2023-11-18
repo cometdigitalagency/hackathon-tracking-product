@@ -24,7 +24,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // The order tracker
+  // The use package tracker
   final OrderTracker orderTracker = OrderTracker();
   late Future<Map<String, dynamic>> fetchData;
   final TextEditingController productIdController = TextEditingController();
@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       );
-      print(data);
+      // print(data);
     } catch (error) {
       // print('Error: $error');
     }

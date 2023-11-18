@@ -33,7 +33,7 @@ class _ListProductState extends State<ListProduct> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Price: ${widget.product['price']}',
+              'Price: ${widget.product['to']['name']}',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             // Add more details as needed based on your product structure

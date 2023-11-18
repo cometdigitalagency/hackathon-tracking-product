@@ -12,32 +12,24 @@ class OrderTracker {
     required Express express,
     required String productId,
   }) async {
-    if (express == Express.expressA) {
-      String baseUrlA = 'https://kiangkai.com/track/$productId';
-      final response = await http.get(Uri.parse(baseUrlA));
+    final baseUrl = _getBaseUrl(express, productId);
+    final response = await http.get(Uri.parse(baseUrl));
 
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        return data;
-      } else {
-        throw Exception('Failed to fetch data: ${response.statusCode}');
-      }
-    } else if (express == Express.expressB) {
-      String baseUrlB = 'https://example.com/$productId';
-      final response = await http.get(Uri.parse(baseUrlB));
+    // print(response.statusCode);
 
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        print(data);
-        return data;
-      } else {
-        throw Exception('Failed to fetch data: ${response.statusCode}');
-      }
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch data: ${response.statusCode}');
     }
+  }
 
-    // In case the express type is not recognized, you can handle it appropriately.
-    throw Exception('Invalid express type: $express');
+  String _getBaseUrl(Express express, String productId) {
+    switch (express) {
+      case Express.expressA:
+        return 'https://kiangkai.com/track/$productId';
+      case Express.expressB:
+        return 'https://example.com/$productId';
+    }
   }
 }
