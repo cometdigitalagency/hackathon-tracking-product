@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "tracking_product",
+            "cwd": "tracking_product",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "tracking_product (profile mode)",
+            "cwd": "tracking_product",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "tracking_product (release mode)",
+            "cwd": "tracking_product",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "todo",
+            "cwd": "tracking_product\\todo",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "todo (profile mode)",
+            "cwd": "tracking_product\\todo",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "todo (release mode)",
+            "cwd": "tracking_product\\todo",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
