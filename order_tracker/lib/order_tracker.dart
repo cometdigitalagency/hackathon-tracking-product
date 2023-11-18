@@ -1,22 +1,41 @@
-// order_tracker.dart
-
 library order_tracker;
 
-import 'order.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+export 'src/express.dart';
+import 'src/express.dart';
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+class OrderTracker {
+  Future<void> fetchData({
+    required Express express,
+    required String productId,
+  }) async {
+    if (express == Express.expressA) {
+      String baseUrlA = 'https://kiangkai.com/track/$productId';
+      final response = await http.get(Uri.parse(baseUrlA));
+      //
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        final data = (response.body);
+        print(data);
+      
+      } else {
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } else if (express == Express.expressB) {
+      String baseUrlB = 'https://example.com/$productId';
+      final response = await http.get(Uri.parse(baseUrlB));
 
-  /// Calculate the total quantity of items in a list of orders.
-  Future<int> calculateTotalQuantity(List<Order> orders) async {
-    int totalQuantity = 0;
-
-    for (var order in orders) {
-      totalQuantity += order.quantity;
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        print(responseData);
+      } else {
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
     }
 
-    return totalQuantity;
+    // In case the express type is not recognized, you can handle it appropriately.
+    throw Exception('Invalid express type: $express');
   }
 }
