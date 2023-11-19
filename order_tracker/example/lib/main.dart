@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:order_tracker/order_tracker.dart';
 
+import 'page/tracking_product.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,15 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
       home: MyHomePage(),
     );
   }
 }
-
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -28,7 +24,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // The order tracker
+  // The use package tracker
   final OrderTracker orderTracker = OrderTracker();
   late Future<Map<String, dynamic>> fetchData;
   final TextEditingController productIdController = TextEditingController();
@@ -45,11 +41,17 @@ class _MyHomePageState extends State<MyHomePage> {
         express: Express.expressA,
         productId: enteredProductId,
       );
-      // Handle the fetched data as needed
-      print(data);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ListProduct(
+            product: data,
+          ),
+        ),
+      );
+      // print(data);
     } catch (error) {
-      // Handle errors
-      print('Error: $error');
+      // print('Error: $error');
     }
   }
 
@@ -115,10 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                       borderRadius: BorderRadius.circular(4),
                                       color: Colors.white,
                                     ),
-                                    child: TextField(
-                                      controller: productIdController,
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: TextField(
+                                        controller: productIdController,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        style: const TextStyle(fontSize: 20),
                                       ),
                                     ),
                                   ),
@@ -210,7 +216,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         offset: const Offset(0, 0),
                       )
                     ]),
-
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -286,7 +291,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       color: Colors.black,
                                     ),
                               ),
-                              SvgPicture.asset('assets/icons_arrow.svg')
                             ],
                           )
                         ],
