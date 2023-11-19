@@ -7,6 +7,8 @@ void main() {
   runApp(const MyApp());
 }
 
+const List<String> list = <String>['ExpressA', 'ExpressB'];
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -28,6 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final OrderTracker orderTracker = OrderTracker();
   ExpressModel product = ExpressModel();
   final TextEditingController productIdController = TextEditingController();
+  String dropdownValue = list.first;
+
   @override
   void initState() {
     super.initState();
@@ -66,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       product = ExpressModel.fromJson(data);
       setState(() {});
-      print(data);
+      // print(data);
     } catch (error) {
       // print('Error: $error');
     }
@@ -151,13 +155,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 Container(
                                   padding: const EdgeInsets.all(14),
-                                  width: 50,
+                                  width: 120,
                                   height: 49,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4),
                                     color: Colors.white,
                                   ),
-                                  child: Image.asset("assets/qr.png"),
+                                  child: DropdownButton<String>(
+                                    value: dropdownValue,
+                                    elevation: 16,
+                                    style: const TextStyle(
+                                        color: Colors.deepPurple),
+                                    onChanged: (String? value) {
+                                      // This is called when the user selects an item.
+                                      setState(() {
+                                        dropdownValue = value!;
+                                      });
+                                    },
+                                    items: list.map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
                               ],
                             ),
@@ -223,7 +245,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text('ສະຖານະ ພັດສະດຸຂອງທ່ານ'),
+                          const Text(
+                            'ສະຖານະ ພັດສະດຸຂອງທ່ານ',
+                            style: TextStyle(fontSize: 24),
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -238,16 +263,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            Text('${item.title}',
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text('${item.date}',
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             Text(
-                                              '${item.title}',
+                                              '${item.description}',
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyLarge
+                                                  .bodySmall
                                                   ?.copyWith(
                                                     color: Colors.black,
                                                   ),
                                             ),
-                                            Container(
+                                            SizedBox(
                                               width: 2,
                                               height: 35,
                                               child: ClipRRect(
@@ -259,27 +296,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   color: Colors.purple,
                                                 ),
                                               ),
-                                            ),
-                                            Text(
-                                              '${item.date}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                    color: Colors.black,
-                                                  ),
-                                            ),
-                                            Text(
-                                              '${item.description}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                    color: Colors.black,
-                                                  ),
-                                            ),
-                                            const SizedBox(
-                                              height: 12,
                                             ),
                                           ],
                                         );
