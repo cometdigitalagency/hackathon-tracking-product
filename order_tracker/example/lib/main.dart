@@ -1,12 +1,13 @@
-import 'package:example/product_info.dart';
+import 'package:example/page/expressmodel.dart';
+import 'package:example/page/product_info.dart';
 import 'package:flutter/material.dart';
 import 'package:order_tracker/order_tracker.dart';
-
-import 'page/tracking_product.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+const List<String> list = <String>['ExpressA', 'ExpressB'];
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -27,14 +28,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // The use package tracker
   final OrderTracker orderTracker = OrderTracker();
-  late Future<Map<String, dynamic>> fetchData;
+  ExpressModel product = ExpressModel();
   final TextEditingController productIdController = TextEditingController();
+  String dropdownValue = list.first;
+
   @override
   void initState() {
     super.initState();
   }
 
-  void _trackProduct() async {
+  void _productInfo() async {
     final String enteredProductId = productIdController.text;
 
     try {
@@ -45,11 +48,28 @@ class _MyHomePageState extends State<MyHomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ListProduct(
+          builder: (context) => ProductInfo(
             product: data,
           ),
         ),
       );
+      // print(data);
+    } catch (error) {
+      // print('Error: $error');
+    }
+  }
+
+  void _trackProduct() async {
+    final String enteredProductId = productIdController.text;
+
+    try {
+      final data = await orderTracker.fetchData(
+        express: Express.expressA,
+        productId: enteredProductId,
+      );
+
+      product = ExpressModel.fromJson(data);
+      setState(() {});
       // print(data);
     } catch (error) {
       // print('Error: $error');
@@ -135,13 +155,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 Container(
                                   padding: const EdgeInsets.all(14),
-                                  width: 50,
+                                  width: 120,
                                   height: 49,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4),
                                     color: Colors.white,
                                   ),
-                                  child: Image.asset("assets/qr.png"),
+                                  child: DropdownButton<String>(
+                                    value: dropdownValue,
+                                    elevation: 16,
+                                    style: const TextStyle(
+                                        color: Colors.deepPurple),
+                                    onChanged: (String? value) {
+                                      // This is called when the user selects an item.
+                                      setState(() {
+                                        dropdownValue = value!;
+                                      });
+                                    },
+                                    items: list.map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
                                 ),
                               ],
                             ),
@@ -185,17 +223,13 @@ class _MyHomePageState extends State<MyHomePage> {
               [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProductInfo()),
-                    );
+                    _productInfo();
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 16),
+                        horizontal: 16, vertical: 16),
                     child: Container(
-                      height: 420,
+                      height: 600,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
@@ -209,165 +243,64 @@ class _MyHomePageState extends State<MyHomePage> {
                             )
                           ]),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Example',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Container(
-                                height: 31,
-                                width: 78,
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage("assets/Delivery.png"),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            ],
+                          const Text(
+                            'ສະຖານະ ພັດສະດຸຂອງທ່ານ',
+                            style: TextStyle(fontSize: 24),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Confirm Order Package',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 2:12 AM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                width: 2,
-                                height: 25,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.5),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.8,
-                                    color: Colors.purple,
-                                  ),
+                              if (product.trackings != null)
+                                SingleChildScrollView(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: product.trackings!.length,
+                                      itemBuilder: (context, index) {
+                                        final item = product.trackings![index];
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('${item.title}',
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text('${item.date}',
+                                                style: const TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            Text(
+                                              '${item.description}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall
+                                                  ?.copyWith(
+                                                    color: Colors.black,
+                                                  ),
+                                            ),
+                                            SizedBox(
+                                              width: 2,
+                                              height: 35,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(2.5),
+                                                child:
+                                                    const LinearProgressIndicator(
+                                                  value: 1,
+                                                  color: Colors.purple,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'Oder Has been Pick up',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 4:12 AM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                width: 2,
-                                height: 30,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.5),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.8,
-                                    color: Colors.purple,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'In Transit',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 6:12 AM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                width: 2,
-                                height: 30,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.5),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.8,
-                                    color: Colors.purple,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'On Branch',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 12:12 PM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
                             ],
                           ),
                           SizedBox(
