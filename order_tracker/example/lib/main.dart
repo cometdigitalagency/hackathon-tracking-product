@@ -1,5 +1,8 @@
 import 'package:example/product_info.dart';
 import 'package:flutter/material.dart';
+import 'package:order_tracker/order_tracker.dart';
+
+import 'page/tracking_product.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,21 +13,49 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // The use package tracker
+  final OrderTracker orderTracker = OrderTracker();
+  late Future<Map<String, dynamic>> fetchData;
+  final TextEditingController productIdController = TextEditingController();
   @override
+  void initState() {
+    super.initState();
+  }
+
+  void _trackProduct() async {
+    final String enteredProductId = productIdController.text;
+
+    try {
+      final data = await orderTracker.fetchData(
+        express: Express.expressA,
+        productId: enteredProductId,
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ListProduct(
+            product: data,
+          ),
+        ),
+      );
+      // print(data);
+    } catch (error) {
+      // print('Error: $error');
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
@@ -87,9 +118,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                       borderRadius: BorderRadius.circular(4),
                                       color: Colors.white,
                                     ),
-                                    child: const TextField(
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: TextField(
+                                        controller: productIdController,
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                        style: const TextStyle(fontSize: 20),
                                       ),
                                     ),
                                   ),
@@ -114,17 +150,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: 48,
                             width: double.infinity,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _trackProduct();
+                              },
                               style: TextButton.styleFrom(
                                 backgroundColor: Colors.black,
                               ),
-                              child: Text('Track Product',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      )),
+                              child: Text(
+                                'Track Product',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                      color: Colors.white,
+                                    ),
+                              ),
                             ),
                           )
                         ],
@@ -143,226 +183,126 @@ class _MyHomePageState extends State<MyHomePage> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProductInfo()),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 16),
-                    child: Container(
-                      height: 420,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).shadowColor,
-                              spreadRadius: 0,
-                              blurRadius: 4,
-                              offset: const Offset(0, 0),
-                            )
-                          ]),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Example',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Container(
-                                height: 31,
-                                width: 78,
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage("assets/Delivery.png"),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Confirm Order Package',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 2:12 AM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                width: 2,
-                                height: 25,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.5),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.8,
-                                    color: Colors.purple,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'Oder Has been Pick up',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 4:12 AM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                width: 2,
-                                height: 30,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.5),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.8,
-                                    color: Colors.purple,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'In Transit',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 6:12 AM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                width: 2,
-                                height: 30,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.5),
-                                  child: const LinearProgressIndicator(
-                                    value: 0.8,
-                                    color: Colors.purple,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Text(
-                                'On Branch',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              Text(
-                                '23/11/2023, 12:12 PM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 68,
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'More Details',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: Colors.black,
-                                          ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  height: 1,
-                                  color: Colors.black,
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 24,
                   ),
-                )
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'My Products',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
+          SliverList(delegate: SliverChildBuilderDelegate((_, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Container(
+                height: 174,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor,
+                        spreadRadius: 0,
+                        blurRadius: 4,
+                        offset: const Offset(0, 0),
+                      )
+                    ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Example',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                        Container(
+                          height: 31,
+                          width: 78,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/Delivery.png"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'In Transit',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                        Text(
+                          'Last Update: 68 hours ago',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        // ignore: sized_box_for_whitespace
+                        Container(
+                          height: 5,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2.5),
+                            child: const LinearProgressIndicator(
+                              value: 0.8,
+                              color: Colors.purple,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      width: 68,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'More Details',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.black,
+                                    ),
+                              ),
+                              SvgPicture.asset('assets/icons_arrow.svg')
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }))
         ],
       ),
     );

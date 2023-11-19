@@ -5,37 +5,31 @@ import 'package:http/http.dart' as http;
 export 'src/express.dart';
 import 'src/express.dart';
 
+export 'order_tracker.dart';
+
 class OrderTracker {
-  Future<void> fetchData({
+  Future<Map<String, dynamic>> fetchData({
     required Express express,
     required String productId,
   }) async {
-    if (express == Express.expressA) {
-      String baseUrlA = 'https://kiangkai.com/track/$productId';
-      final response = await http.get(Uri.parse(baseUrlA));
-      //
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        final data = (response.body);
-        print(data);
-      
-      } else {
-        throw Exception('Failed to fetch data: ${response.statusCode}');
-      }
-    } else if (express == Express.expressB) {
-      String baseUrlB = 'https://example.com/$productId';
-      final response = await http.get(Uri.parse(baseUrlB));
+    final baseUrl = _getBaseUrl(express, productId);
+    final response = await http.get(Uri.parse(baseUrl));
 
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        print(responseData);
-      } else {
-        throw Exception('Failed to fetch data: ${response.statusCode}');
-      }
+    // print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to fetch data: ${response.statusCode}');
     }
+  }
 
-    // In case the express type is not recognized, you can handle it appropriately.
-    throw Exception('Invalid express type: $express');
+  String _getBaseUrl(Express express, String productId) {
+    switch (express) {
+      case Express.expressA:
+        return 'https://kiangkai.com/track/$productId';
+      case Express.expressB:
+        return 'https://example.com/$productId';
+    }
   }
 }
